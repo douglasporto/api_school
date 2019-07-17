@@ -20,9 +20,9 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      provider: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
+      kind: {
+        type: Sequelize.STRING,
+        defaultValue: 'adm',
         allowNull: false,
       },
       created_at: {

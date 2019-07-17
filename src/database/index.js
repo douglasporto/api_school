@@ -4,7 +4,7 @@ import User from '../app/models/User';
 import File from '../app/models/File';
 import databaseConfig from '../config/database';
 
-const models = [User, File, Appointment];
+const models = [User, File];
 
 class Database {
   constructor() {
