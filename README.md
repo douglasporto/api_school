@@ -16,7 +16,7 @@ Api for a meeting system about tech and development
 ### Docker init
 
 #### Postgree
-`docker run --name database_school -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres`
+`docker run --name database_school -e POSTGRES_PASSWORD=docker -e POSTGRES_DB=school -p 5432:5432 -d postgres`
 
 #### MongoDb
 `docker run --name mongo_school -p 27017:27017 -d -t mongo`
