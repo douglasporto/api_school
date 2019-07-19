@@ -4,6 +4,10 @@ import routes from './routes';
 
 import './database';
 
+require('dotenv').config({
+  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+});
+
 class App {
   constructor() {
     this.server = express();
