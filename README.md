@@ -34,5 +34,11 @@ Api for a meeting system about tech and development
 
  - Fix ESLint `yarn eslint --fix src --ext .js`
 
+## Run the API
+ - `yarn dev`
+
+## Run the Tests
+ - This api was made on TDD (test driven development) with [Jest.js](https://jestjs.io/)
+ - `yarn test`
 
 ** By [DouglasPorto](http://douglasporto.com.br) **
