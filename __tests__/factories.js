@@ -9,5 +9,4 @@ factory.define('User', User, {
   password: faker.internet.password(),
   kind: faker.random.arrayElement(['adm', 'student', 'teacher']),
 });
-
 module.exports = factory;
