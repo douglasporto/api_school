@@ -6,6 +6,10 @@ class School extends Model {
 
     return this;
   }
+
+  static associate(models) {
+    this.hasMany(models.School, { foreignKey: 'user_id', as: 'user' });
+  }
 }
 
 export default School;
