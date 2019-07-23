@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js test
+  /usr/local/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js test -t School
 
 PATH: 
   /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/douglasporto/Library/Android/sdk/tools:/Users/douglasporto/Library/Android/sdk/platform-tools
@@ -5206,7 +5206,7 @@ Trace:
   Error: Command failed.
   Exit code: 1
   Command: sh
-  Arguments: -c NODE_ENV=test jest --verbose --forceExit
+  Arguments: -c NODE_ENV=test jest --verbose --forceExit -t School
   Directory: /Users/douglasporto/Documents/projetos/system/school
   Output:
   
