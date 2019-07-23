@@ -27,5 +27,6 @@ routes.post('/files', uploads.single('file'), FileController.store);
 
 routes.get('/schools', SchoolController.index);
 routes.post('/schools', SchoolController.store);
+routes.put('/schools/:id', SchoolController.update);
 
 export default routes;
