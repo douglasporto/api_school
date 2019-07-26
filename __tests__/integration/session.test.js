@@ -15,9 +15,9 @@ describe('Authentication', () => {
     const user = await factory.create('User', {
       password: '123123',
     });
-    console.log(user.email);
+
     const response = await request(app)
-      .post('/sessions')
+      .post('/authentication')
       .send({
         email: user.email,
         password: '123123',
@@ -30,9 +30,9 @@ describe('Authentication', () => {
     const user = await factory.create('User', {
       password: '123123',
     });
-    console.log(user.email);
+
     const response = await request(app)
-      .post('/sessions')
+      .post('/authentication')
       .send({
         email: user.email,
         password: '123456',
@@ -45,9 +45,9 @@ describe('Authentication', () => {
     const user = await factory.create('User', {
       password: '123123',
     });
-    console.log(user.email);
+
     const response = await request(app)
-      .post('/sessions')
+      .post('/authentication')
       .send({
         email: user.email,
         password: '123123',
