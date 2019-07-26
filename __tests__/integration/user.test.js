@@ -12,7 +12,7 @@ describe('User', () => {
   });
   it('should create the User', async () => {
     const response = await request(app)
-      .post('/users')
+      .post('/auth/signup')
       .send({
         name: 'Douglas',
         email: 'douglas@teste.com.br',
@@ -23,7 +23,7 @@ describe('User', () => {
   });
   it('should not create the User without email', async () => {
     const response = await request(app)
-      .post('/users')
+      .post('/auth/signup')
       .send({
         name: 'Douglas',
         password: '123123',

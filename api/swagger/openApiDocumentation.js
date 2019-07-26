@@ -39,7 +39,7 @@ module.exports = {
   schemes: ['http'],
   paths: {
     // AUTH START
-    '/authentication': {
+    '/auth/login': {
       post: {
         tags: ['Authentication'],
         security: [],
@@ -130,42 +130,9 @@ module.exports = {
         },
       },
     },
-    // AUTH END
-    // USER START
-    '/users': {
-      get: {
-        tags: ['User'],
-        summary: 'List the Users',
-        produces: ['application/json'],
-        security: [{ bearerAuth: [] }],
-        responses: {
-          '200': {
-            description: 'OK',
-            schema: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  id: {
-                    type: 'integer',
-                    example: '1',
-                  },
-                  name: {
-                    type: 'string',
-                    example: 'Douglas',
-                  },
-                  email: {
-                    type: 'string',
-                    example: 'douglas@porto.com',
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
+    '/auth/signup': {
       post: {
-        tags: ['User'],
+        tags: ['Authentication'],
         summary: 'Create User',
         description: 'Create the user.',
         security: [{ bearerAuth: [] }],
@@ -251,6 +218,41 @@ module.exports = {
                 error: {
                   type: 'string',
                   description: 'User already exist.',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    // AUTH END
+    // USER START
+    '/users': {
+      get: {
+        tags: ['User'],
+        summary: 'List the Users',
+        produces: ['application/json'],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          '200': {
+            description: 'OK',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'integer',
+                    example: '1',
+                  },
+                  name: {
+                    type: 'string',
+                    example: 'Douglas',
+                  },
+                  email: {
+                    type: 'string',
+                    example: 'douglas@porto.com',
+                  },
                 },
               },
             },

@@ -17,7 +17,7 @@ describe('Authentication', () => {
     });
 
     const response = await request(app)
-      .post('/authentication')
+      .post('/auth/login')
       .send({
         email: user.email,
         password: '123123',
@@ -32,7 +32,7 @@ describe('Authentication', () => {
     });
 
     const response = await request(app)
-      .post('/authentication')
+      .post('/auth/login')
       .send({
         email: user.email,
         password: '123456',
@@ -47,7 +47,7 @@ describe('Authentication', () => {
     });
 
     const response = await request(app)
-      .post('/authentication')
+      .post('/auth/login')
       .send({
         email: user.email,
         password: '123123',

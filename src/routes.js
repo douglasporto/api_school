@@ -13,8 +13,8 @@ import SchoolController from './app/controllers/SchoolController';
 const routes = new Router();
 const uploads = multer(multerConfig);
 
-routes.post('/users', UserController.store);
-routes.post('/authentication', SessionController.store);
+routes.post('/auth/signup', UserController.store);
+routes.post('/auth/login', SessionController.store);
 
 routes.use(authMiddleware);
 routes.get('/users', UserController.index);
