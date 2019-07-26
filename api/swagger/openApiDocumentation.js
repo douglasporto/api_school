@@ -12,13 +12,27 @@ module.exports = {
   },
   host: 'localhost/3333',
   basePath: '/',
+  securityDefinitions: {
+    bearerAuth: {
+      type: 'apiKey',
+      in: 'header',
+      name: 'Authorization',
+      description:
+        'Enter your bearer token in the format **Bearer &lt;token>**',
+    },
+  },
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   tags: [
     {
       name: 'Authentication',
       description: 'Everything about Authentication',
     },
     {
-      name: 'user',
+      name: 'User',
       description: 'Crud User',
     },
   ],
@@ -28,6 +42,7 @@ module.exports = {
     '/authentication': {
       post: {
         tags: ['Authentication'],
+        security: [],
         summary: 'Create JWT',
         description: 'Create authentication for API access.',
         operationId: 'createUser',
@@ -116,6 +131,245 @@ module.exports = {
       },
     },
     // AUTH END
+    // USER START
+    '/users': {
+      get: {
+        tags: ['User'],
+        summary: 'List the Users',
+        produces: ['application/json'],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          '200': {
+            description: 'OK',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'integer',
+                    example: '1',
+                  },
+                  name: {
+                    type: 'string',
+                    example: 'Douglas',
+                  },
+                  email: {
+                    type: 'string',
+                    example: 'douglas@porto.com',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      post: {
+        tags: ['User'],
+        summary: 'Create User',
+        description: 'Create the user.',
+        security: [{ bearerAuth: [] }],
+        produces: ['application/json'],
+        parameters: [
+          {
+            in: 'body',
+            name: 'body',
+            description: 'Created user object',
+            required: true,
+            schema: {
+              properties: {
+                name: {
+                  type: 'string',
+                  required: true,
+                },
+                email: {
+                  type: 'string',
+                  required: true,
+                },
+                password: {
+                  type: 'string',
+                  required: true,
+                },
+                kind: {
+                  type: 'string',
+                  required: false,
+                },
+              },
+              example: {
+                name: 'Douglas Porto',
+                email: 'douglasporto@brainmind.com.br',
+                password: '123456',
+                kind: 'admin',
+              },
+            },
+          },
+        ],
+        responses: {
+          '201': {
+            description: 'CREATED',
+            schema: {
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'boolean',
+                },
+                name: {
+                  type: 'string',
+                },
+                email: {
+                  type: 'string',
+                },
+                kind: {
+                  type: 'string',
+                },
+              },
+              example: {
+                id: '1',
+                name: 'Douglas Porto',
+                email: 'douglasporto@brainmind.com.br',
+                kind: 'admin',
+              },
+            },
+          },
+          '400': {
+            description: 'Validation fails',
+            schema: {
+              type: 'object',
+              properties: {
+                error: {
+                  type: 'string',
+                  description: 'Validation fails.',
+                },
+              },
+            },
+          },
+          '422': {
+            description: 'User already exist',
+            schema: {
+              type: 'object',
+              properties: {
+                error: {
+                  type: 'string',
+                  description: 'User already exist.',
+                },
+              },
+            },
+          },
+        },
+      },
+      put: {
+        tags: ['User'],
+        summary: 'Update the user.',
+        description: 'Only the user can change himself',
+        security: [{ bearerAuth: [] }],
+        produces: ['application/json'],
+        parameters: [
+          {
+            in: 'body',
+            name: 'body',
+            required: true,
+            schema: {
+              properties: {
+                name: {
+                  type: 'string',
+                  required: false,
+                },
+                email: {
+                  type: 'string',
+                  required: false,
+                },
+                oldPassword: {
+                  type: 'string',
+                  required: false,
+                },
+                password: {
+                  type: 'string',
+                  required: true,
+                  description: 'Only required if to send oldPassword',
+                },
+                confirmPassword: {
+                  type: 'string',
+                  required: true,
+                  description: 'Only required if to send oldPassword',
+                },
+              },
+              example: {
+                name: 'Douglas Porto',
+                email: 'douglasporto@brainmind.com.br',
+                oldPassword: '123456',
+                password: '654321',
+                confirmPassword: '654321',
+              },
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'UPDATED',
+            schema: {
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'boolean',
+                },
+                name: {
+                  type: 'string',
+                },
+                email: {
+                  type: 'string',
+                },
+                kind: {
+                  type: 'string',
+                },
+              },
+              example: {
+                id: '1',
+                name: 'Douglas Porto',
+                email: 'douglasporto@brainmind.com.br',
+                kind: 'admin',
+              },
+            },
+          },
+          '401': {
+            description: 'Password does not match',
+            schema: {
+              type: 'object',
+              properties: {
+                error: {
+                  type: 'string',
+                  description: 'Password does not match.',
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Validation fails',
+            schema: {
+              type: 'object',
+              properties: {
+                error: {
+                  type: 'string',
+                  description: 'Validation fails.',
+                },
+              },
+            },
+          },
+          '422': {
+            description: 'User already exist',
+            schema: {
+              type: 'object',
+              properties: {
+                error: {
+                  type: 'string',
+                  description: 'User already exist.',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    // USER END
 
     // '/pet': {
     //   post: {
@@ -980,18 +1234,4 @@ module.exports = {
     description: 'Find out more about Swagger',
     url: 'http://swagger.io',
   },
-  components: {
-    securitySchemes: {
-      bearerAuth: {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-      },
-    },
-  },
-  security: [
-    {
-      bearerAuth: [],
-    },
-  ],
 };
