@@ -28,21 +28,31 @@ class UserController {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
       email: Yup.string()
-        .email()
+        .email('Endereço de e-mail inválido')
         .required(),
       password: Yup.string()
         .required()
-        .min(6),
+        .min(6, 'A senha deve possuir pelo menos 6 caracteres'),
     });
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
+
+    try {
+      await schema.validate(req.body, { abortEarly: true });
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
     }
+
     const userExist = await User.findOne({ where: { email: req.body.email } });
+
     if (userExist) {
-      return res.status(422).json({ error: 'User already exist!' });
+      return res.status(422).json({
+        error: 'O e-mail digitado já está sendo utilizado',
+      });
     }
-    const { id, name, email, kind } = await User.create(req.body);
-    return res.json({ id, name, email, kind });
+
+    const user = await User.create(req.body);
+    const { id, name, email, kind } = user;
+
+    return res.json({ id, name, email, kind, token: user.generateToken() });
   }
 
   async update(req, res) {
