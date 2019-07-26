@@ -35,7 +35,7 @@ describe('User', () => {
     const user = await factory.create('User', {
       password: '123123',
     });
-    console.log(user.email);
+
     const response = await request(app)
       .get('/users')
       .set('Authorization', `Bearer ${user.generateToken()}`);
@@ -51,7 +51,7 @@ describe('User', () => {
     const user = await factory.create('User', {
       password: '123123',
     });
-    console.log(user.email);
+
     const response = await request(app)
       .put(`/users`)
       .send({
@@ -59,5 +59,21 @@ describe('User', () => {
       })
       .set('Authorization', `Bearer ${user.generateToken()}`);
     expect(response.body.name).toBe('Douglas');
+  });
+
+  it('should not update with user already exist', async () => {
+    const user = await factory.create('User');
+    const user2 = await factory.create('User', {
+      email: 'douglas@bm.com',
+    });
+
+    const response = await request(app)
+      .put(`/users`)
+      .send({
+        name: 'Douglas',
+        email: user2.email,
+      })
+      .set('Authorization', `Bearer ${user.generateToken()}`);
+    expect(response.status).toBe(422);
   });
 });
