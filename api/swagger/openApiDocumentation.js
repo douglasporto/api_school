@@ -2,7 +2,7 @@ module.exports = {
   swagger: '2.0',
   info: {
     description: 'This is a sample server School server.',
-    version: '1.0.0',
+    version: '1.2.0',
     title: 'Brain & Mind - School',
     contact: {
       name: 'Douglas Porto',
