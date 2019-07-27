@@ -36,7 +36,25 @@ describe('User', () => {
         name: 'Douglas',
         password: '123123',
       });
-    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('O e-mail é obrigatório');
+  });
+  it('Should not create the User without name', async () => {
+    const response = await request(app)
+      .post('/auth/signup')
+      .send({
+        email: 'test@brainmind.com.br',
+        password: '123123',
+      });
+    expect(response.body.error).toBe('O nome é obrigatório');
+  });
+  it('Should not create the User without password', async () => {
+    const response = await request(app)
+      .post('/auth/signup')
+      .send({
+        name: 'Douglas',
+        email: 'test@brainmind.com.br',
+      });
+    expect(response.body.error).toBe('A senha é obrigatória');
   });
 
   it('Should return user list', async () => {
@@ -47,7 +65,7 @@ describe('User', () => {
     const response = await request(app)
       .get('/users')
       .set('Authorization', `Bearer ${user.generateToken()}`);
-    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBeTruthy();
   });
 
   it('Should not return user list without token', async () => {

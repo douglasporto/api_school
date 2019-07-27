@@ -26,12 +26,12 @@ class UserController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      name: Yup.string().required(),
+      name: Yup.string().required('O nome é obrigatório'),
       email: Yup.string()
         .email('Endereço de e-mail inválido')
-        .required(),
+        .required('O e-mail é obrigatório'),
       password: Yup.string()
-        .required()
+        .required('A senha é obrigatória')
         .min(6, 'A senha deve possuir pelo menos 6 caracteres'),
     });
 
