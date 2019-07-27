@@ -33,7 +33,7 @@ describe('Authentication', () => {
         password: '123123',
       });
 
-    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('E-mail é obrigatório');
   });
   it('Should not authenticate when send email wrong', async () => {
     const response = await request(app)
@@ -55,7 +55,7 @@ describe('Authentication', () => {
         email: user.email,
       });
 
-    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('A senha é obrigatória');
   });
 
   it('Should not authenticate when user not exist', async () => {
@@ -66,7 +66,9 @@ describe('Authentication', () => {
         password: '123123',
       });
 
-    expect(response.status).toBe(401);
+    expect(response.body.error).toBe(
+      'Usuário test@brainmind.com.br não cadastrado'
+    );
   });
 
   it('Should not authenticate with invalid credentials', async () => {
@@ -82,7 +84,7 @@ describe('Authentication', () => {
         password: '123456',
       });
 
-    expect(response.status).toBe(401);
+    expect(response.body.error).toBe('Senha incorreta');
   });
 
   it('Should return jwt token when authenticated', async () => {
