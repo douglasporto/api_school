@@ -58,20 +58,33 @@ class UserController {
   async update(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string(),
-      email: Yup.string().email(),
-      oldPassword: Yup.string().min(6),
+      email: Yup.string().email('Endereço de e-mail inválido'),
+      oldPassword: Yup.string().min(
+        6,
+        'A senha deve possuir pelo menos 6 caracteres'
+      ),
       password: Yup.string()
-        .min(6)
+        .min(6, 'A senha deve possuir pelo menos 6 caracteres')
         .when('oldPassword', (oldPassword, field) =>
-          oldPassword ? field.required() : field
+          oldPassword
+            ? field.required('Você deve digitar a senha antiga')
+            : field
         ),
       confirmPassword: Yup.string().when('password', (password, field) =>
-        password ? field.required().oneOf([Yup.ref('password')]) : field
+        password
+          ? field
+              .required('Você deve confirmar a senha')
+              .oneOf([Yup.ref('password')])
+          : field
       ),
     });
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
+
+    try {
+      await schema.validate(req.body, { abortEarly: true });
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
     }
+
     const { email, oldPassword } = req.body;
 
     const user = await User.findByPk(req.userId);
@@ -81,12 +94,14 @@ class UserController {
         where: { email },
       });
       if (userExist) {
-        return res.status(422).json({ error: 'User already exist!' });
+        return res
+          .status(422)
+          .json({ error: 'O e-mail digitado já está sendo utilizado' });
       }
     }
 
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
-      return res.status(401).json({ error: 'Password does not match' });
+      return res.status(401).json({ error: 'Senha antiga incorreta' });
     }
     const { id, name, kind } = await user.update(req.body);
     return res.json({ id, name, email, kind });

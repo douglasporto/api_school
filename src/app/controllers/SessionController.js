@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import * as Yup from 'yup';
 
 import User from '../models/User';
@@ -7,21 +6,25 @@ class SessionController {
   async store(req, res) {
     const schema = Yup.object().shape({
       email: Yup.string()
-        .email()
-        .required(),
-      password: Yup.string().required(),
+        .email('Endereço de e-mail inválido')
+        .required('E-mail é obrigatório'),
+      password: Yup.string().required('A senha é obrigatória'),
     });
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
+
+    try {
+      await schema.validate(req.body, { abortEarly: true });
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
     }
+
     const { email, password } = req.body;
 
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(401).json({ error: 'User not found!' });
+      return res.status(401).json({ error: `Usuário ${email} não cadastrado` });
     }
     if (!(await user.checkPassword(password))) {
-      return res.status(401).json({ error: 'Password does not match!' });
+      return res.status(401).json({ error: 'Senha incorreta' });
     }
 
     const { id, name } = user;
