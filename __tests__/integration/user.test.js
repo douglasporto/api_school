@@ -59,6 +59,7 @@ describe('User', () => {
 
   it('Should return user list', async () => {
     const user = await factory.create('User', {
+      email: 'test@brainmind.com.br',
       password: '123123',
     });
 
@@ -82,6 +83,7 @@ describe('User', () => {
 
   it('Should update the user', async () => {
     const user = await factory.create('User', {
+      email: 'test@brainmind.com.br',
       password: '123123',
     });
 
