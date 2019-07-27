@@ -52,7 +52,9 @@ class UserController {
     const user = await User.create(req.body);
     const { id, name, email, kind } = user;
 
-    return res.json({ id, name, email, kind, token: user.generateToken() });
+    return res
+      .status(201)
+      .json({ id, name, email, kind, token: user.generateToken() });
   }
 
   async update(req, res) {

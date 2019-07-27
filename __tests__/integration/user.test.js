@@ -14,7 +14,7 @@ describe('User', () => {
       .post('/auth/signup')
       .send(user);
 
-    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('token');
   });
   it('Should not create when already user with email', async () => {
     await factory.create('User', {
