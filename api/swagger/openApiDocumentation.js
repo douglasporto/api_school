@@ -35,6 +35,10 @@ module.exports = {
       name: 'User',
       description: 'Crud User',
     },
+    {
+      name: 'School',
+      description: 'Crud School',
+    },
   ],
   schemes: ['http'],
   paths: {
@@ -372,6 +376,143 @@ module.exports = {
       },
     },
     // USER END
+
+    // SCHOOL START
+    '/school': {
+      get: {
+        tags: ['School'],
+        summary: 'List the School',
+        produces: ['application/json'],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          '200': {
+            description: 'OK',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'integer',
+                    example: '1',
+                  },
+                  name: {
+                    type: 'string',
+                    example: 'Escola CNC',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      post: {
+        tags: ['School'],
+        summary: 'Create a School',
+        description: 'Create a School.',
+        security: [{ bearerAuth: [] }],
+        produces: ['application/json'],
+        parameters: [
+          {
+            in: 'body',
+            name: 'body',
+            required: true,
+            schema: {
+              properties: {
+                name: {
+                  type: 'string',
+                  required: true,
+                  example: 'Escola CNC',
+                },
+              },
+            },
+          },
+        ],
+        responses: {
+          '201': {
+            description: 'CREATED',
+            schema: {
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'boolean',
+                  property: '1',
+                },
+                name: {
+                  type: 'string',
+                  property: 'Colegio CNC',
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Validation fails',
+            schema: {
+              type: 'object',
+              properties: {
+                error: {
+                  type: 'string',
+                  description: 'Validation fails.',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/school/:id': {
+      put: {
+        tags: ['School'],
+        summary: 'Update the School.',
+        security: [{ bearerAuth: [] }],
+        produces: ['application/json'],
+        parameters: [
+          {
+            in: 'body',
+            name: 'body',
+            required: true,
+            schema: {
+              properties: {
+                name: {
+                  type: 'string',
+                  required: false,
+                  example: 'Novo nome Escola',
+                },
+              },
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'UPDATED',
+            schema: {
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'boolean',
+                },
+                name: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Validation fails',
+            schema: {
+              type: 'object',
+              properties: {
+                error: {
+                  type: 'string',
+                  description: 'Validation fails.',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    // School END
 
     // '/pet': {
     //   post: {
