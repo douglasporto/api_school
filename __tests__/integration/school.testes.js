@@ -1,10 +1,8 @@
 /* eslint-disable no-undef */
+import request from 'supertest';
 import app from '../../src/app';
-
-const request = require('supertest');
-
-const truncate = require('../utils/truncate');
-const factory = require('../factories');
+import factory from '../factories';
+import truncate from '../utils/truncate';
 
 describe('School', () => {
   beforeEach(async () => {

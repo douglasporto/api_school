@@ -1,54 +1,89 @@
 /* eslint-disable no-undef */
+import request from 'supertest';
 import app from '../../src/app';
-
-const request = require('supertest');
-const factory = require('../factories');
-
-const truncate = require('../utils/truncate');
+import factory from '../factories';
+import truncate from '../utils/truncate';
 
 describe('User', () => {
   beforeEach(async () => {
     await truncate();
   });
-  it('should create the User', async () => {
+  it('Should create the User', async () => {
+    const user = await factory.attrs('User');
+    const response = await request(app)
+      .post('/auth/signup')
+      .send(user);
+
+    expect(response.body).toHaveProperty('token');
+  });
+  it('Should not create when already user with email', async () => {
+    await factory.create('User', {
+      email: 'test@brainmind.com.br',
+    });
+    const user = await factory.attrs('User', {
+      email: 'test@brainmind.com.br',
+    });
+    const response = await request(app)
+      .post('/auth/signup')
+      .send(user);
+
+    expect(response.status).toBe(422);
+  });
+  it('Should not create the User without email', async () => {
     const response = await request(app)
       .post('/auth/signup')
       .send({
         name: 'Douglas',
-        email: 'douglas@teste.com.br',
         password: '123123',
       });
-
-    expect(response.status).toBe(200);
+    expect(response.body.error).toBe('O e-mail é obrigatório');
   });
-  it('should not create the User without email', async () => {
+  it('Should not create the User without name', async () => {
+    const response = await request(app)
+      .post('/auth/signup')
+      .send({
+        email: 'test@brainmind.com.br',
+        password: '123123',
+      });
+    expect(response.body.error).toBe('O nome é obrigatório');
+  });
+  it('Should not create the User without password', async () => {
     const response = await request(app)
       .post('/auth/signup')
       .send({
         name: 'Douglas',
-        password: '123123',
+        email: 'test@brainmind.com.br',
       });
-    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('A senha é obrigatória');
   });
 
-  it('should return user list', async () => {
+  it('Should return user list', async () => {
     const user = await factory.create('User', {
+      email: 'test@brainmind.com.br',
       password: '123123',
     });
 
     const response = await request(app)
       .get('/users')
       .set('Authorization', `Bearer ${user.generateToken()}`);
-    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBeTruthy();
   });
 
-  it('should not return user list without token', async () => {
+  it('Should not return user list without token', async () => {
     const response = await request(app).get('/users');
-    expect(response.status).toBe(401);
+    expect(response.body.error).toBe('Token não enviado');
   });
 
-  it('should update the user', async () => {
+  it('Should not return user list with token invalid', async () => {
+    const response = await request(app)
+      .get('/users')
+      .set('Authorization', `Bearer dshjfgshfgshjdgfjsgdfjsgj`);
+    expect(response.body.error).toBe('Token inválido');
+  });
+
+  it('Should update the user', async () => {
     const user = await factory.create('User', {
+      email: 'test@brainmind.com.br',
       password: '123123',
     });
 
@@ -61,10 +96,10 @@ describe('User', () => {
     expect(response.body.name).toBe('Douglas');
   });
 
-  it('should not update with user already exist', async () => {
+  it('Should not update with user already exist', async () => {
     const user = await factory.create('User');
     const user2 = await factory.create('User', {
-      email: 'douglas@bm.com',
+      email: 'test@brainmind.com.br',
     });
 
     const response = await request(app)
@@ -75,5 +110,45 @@ describe('User', () => {
       })
       .set('Authorization', `Bearer ${user.generateToken()}`);
     expect(response.status).toBe(422);
+  });
+  it('Should not update the user when send oldPassword but not password', async () => {
+    const user = await factory.create('User');
+
+    const response = await request(app)
+      .put(`/users`)
+      .send({
+        oldPassword: '123456',
+      })
+      .set('Authorization', `Bearer ${user.generateToken()}`);
+    expect(response.body.error).toBe('Você deve digitar a senha antiga');
+  });
+
+  it('Should not update the user when not confirm the password', async () => {
+    const user = await factory.create('User');
+
+    const response = await request(app)
+      .put(`/users`)
+      .send({
+        oldPassword: '123456',
+        password: '654321',
+      })
+      .set('Authorization', `Bearer ${user.generateToken()}`);
+    expect(response.body.error).toBe('Você deve confirmar a senha');
+  });
+
+  it('Should not update the user when send wrong oldPassword', async () => {
+    const user = await factory.create('User', {
+      password: 'testpassword',
+    });
+
+    const response = await request(app)
+      .put(`/users`)
+      .send({
+        oldPassword: '123456',
+        password: '654321',
+        confirmPassword: '654321',
+      })
+      .set('Authorization', `Bearer ${user.generateToken()}`);
+    expect(response.body.error).toBe('Senha antiga incorreta');
   });
 });

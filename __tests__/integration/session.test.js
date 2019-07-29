@@ -1,21 +1,19 @@
 /* eslint-disable no-undef */
+import request from 'supertest';
 import app from '../../src/app';
-
-const request = require('supertest');
-
-const truncate = require('../utils/truncate');
-const factory = require('../factories');
+import factory from '../factories';
+import truncate from '../utils/truncate';
 
 describe('Authentication', () => {
   beforeEach(async () => {
     await truncate();
   });
 
-  it('should authenticate with valid credentials', async () => {
+  it('Should authenticate with valid credentials', async () => {
     const user = await factory.create('User', {
+      email: 'test@brainmind.com.br',
       password: '123123',
     });
-
     const response = await request(app)
       .post('/auth/login')
       .send({
@@ -23,11 +21,59 @@ describe('Authentication', () => {
         password: '123123',
       });
 
-    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('token');
+  });
+  it('Should not authenticate when not send email', async () => {
+    await factory.create('User', {
+      password: '123123',
+    });
+    const response = await request(app)
+      .post('/auth/login')
+      .send({
+        password: '123123',
+      });
+
+    expect(response.body.error).toBe('E-mail é obrigatório');
+  });
+  it('Should not authenticate when send email wrong', async () => {
+    const response = await request(app)
+      .post('/auth/login')
+      .send({
+        email: 'test',
+        password: '123123',
+      });
+
+    expect(response.body.error).toBe('Endereço de e-mail inválido');
+  });
+  it('Should not authenticate when not send password', async () => {
+    const user = await factory.create('User', {
+      email: 'test@brainmind.com.br',
+    });
+    const response = await request(app)
+      .post('/auth/login')
+      .send({
+        email: user.email,
+      });
+
+    expect(response.body.error).toBe('A senha é obrigatória');
   });
 
-  it('should not authenticate with invalid credentials', async () => {
+  it('Should not authenticate when user not exist', async () => {
+    const response = await request(app)
+      .post('/auth/login')
+      .send({
+        email: 'test@brainmind.com.br',
+        password: '123123',
+      });
+
+    expect(response.body.error).toBe(
+      'Usuário test@brainmind.com.br não cadastrado'
+    );
+  });
+
+  it('Should not authenticate with invalid credentials', async () => {
     const user = await factory.create('User', {
+      email: 'test@brainmind.com.br',
       password: '123123',
     });
 
@@ -38,11 +84,12 @@ describe('Authentication', () => {
         password: '123456',
       });
 
-    expect(response.status).toBe(401);
+    expect(response.body.error).toBe('Senha incorreta');
   });
 
-  it('should return jwt token when authenticated', async () => {
+  it('Should return jwt token when authenticated', async () => {
     const user = await factory.create('User', {
+      email: 'test@brainmind.com.br',
       password: '123123',
     });
 
