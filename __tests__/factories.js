@@ -2,7 +2,7 @@ import faker from 'faker';
 import { factory } from 'factory-girl';
 
 import User from '../src/app/models/User';
-// import School from '../src/app/models/School';
+import School from '../src/app/models/School';
 
 factory.define('User', User, {
   name: faker.name.findName(),
@@ -11,7 +11,7 @@ factory.define('User', User, {
   kind: faker.random.arrayElement(['adm', 'student', 'teacher']),
 });
 
-// factory.define('School', School, {
-//   name: faker.name.findName(),
-// });
+factory.define('School', School, {
+  name: faker.name.findName(),
+});
 export default factory;

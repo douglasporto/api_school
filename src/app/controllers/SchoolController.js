@@ -15,10 +15,12 @@ class SchoolController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      name: Yup.string().required(),
+      name: Yup.string().required('O nome é obrigatório'),
     });
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
+    try {
+      await schema.validate(req.body, { abortEarly: true });
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
     }
     const { id, name } = await School.create(req.body);
     const user = await User.findByPk(req.userId);
@@ -27,16 +29,20 @@ class SchoolController {
       { where: { id: req.userId } }
     );
     if (school_id !== id)
-      return res
-        .status(403)
-        .json({ error: 'Not possible update the user', user });
-    return res.json({ id, name });
+      return res.status(403).json({
+        error: 'Ocorreu um erro. Não foi possivel alterar o usuário',
+        user,
+      });
+    return res.status(201).json({ id, name });
   }
 
   async update(req, res) {
     const { kind } = await User.findByPk(req.userId);
     const school = await School.findByPk(req.params.id);
-    if (!school) return res.status(401).json({ error: 'School not found' });
+    if (!school)
+      return res
+        .status(401)
+        .json({ error: 'Escola não encontrada para alterar' });
 
     if (kind !== 'adm')
       return res.status(400).json({ error: 'User not permission' });
