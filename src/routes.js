@@ -19,6 +19,7 @@ routes.post('/auth/login', SessionController.store);
 routes.use(authMiddleware);
 routes.get('/users', UserController.index);
 routes.put('/users', UserController.update);
+routes.get('/users/:id', UserController.show);
 
 routes.get('/notifications', NotificationsController.index);
 routes.put('/notifications/:id', NotificationsController.update);

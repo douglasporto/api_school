@@ -12,6 +12,7 @@ class User extends Model {
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
         kind: Sequelize.STRING,
+        school_id: Sequelize.ARRAY(Sequelize.INTEGER),
       },
       {
         sequelize,
@@ -29,7 +30,6 @@ class User extends Model {
 
   static associate(models) {
     this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
-    this.belongsTo(models.School, { foreignKey: 'school_id', as: 'school' });
   }
 
   checkPassword(password) {

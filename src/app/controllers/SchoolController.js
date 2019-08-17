@@ -24,15 +24,10 @@ class SchoolController {
     }
     const { id, name } = await School.create(req.body);
     const user = await User.findByPk(req.userId);
-    const { school_id } = await user.update(
-      { school_id: id },
+    await user.update(
+      { school_id: [id, ...user.school_id] },
       { where: { id: req.userId } }
     );
-    if (school_id !== id)
-      return res.status(403).json({
-        error: 'Ocorreu um erro. Não foi possivel alterar o usuário',
-        user,
-      });
     return res.status(201).json({ id, name });
   }
 

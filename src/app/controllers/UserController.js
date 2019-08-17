@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import * as Yup from 'yup';
 import User from '../models/User';
 import File from '../models/File';
@@ -6,6 +7,22 @@ import School from '../models/School';
 class UserController {
   async index(req, res) {
     const user = await User.findAll({
+      attributes: ['id', 'name', 'email', 'avatar_id'],
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+          attributes: ['name', 'path', 'url'],
+        },
+      ],
+    });
+
+    return res.json(user);
+  }
+
+  async show(req, res) {
+    const { id } = req.params;
+    const user = await User.findByPk(id, {
       attributes: ['id', 'name', 'email', 'avatar_id', 'school_id'],
       include: [
         {
@@ -13,15 +30,20 @@ class UserController {
           as: 'avatar',
           attributes: ['name', 'path', 'url'],
         },
-        {
-          model: School,
-          as: 'school',
-          attributes: ['name'],
-        },
       ],
     });
-
-    return res.json(user);
+    if (!user) return res.status(400).json({ error: 'Usuário não encontrado' });
+    const { name, email, avatar_id, school_id, avatar } = user;
+    const whereSchool = user.school_id.map(s => ({
+      id: s,
+    }));
+    const schools = await School.findAll({
+      where: {
+        [Op.or]: whereSchool,
+      },
+      attributes: ['id', 'name'],
+    });
+    return res.json({ name, email, avatar_id, school_id, avatar, schools });
   }
 
   async store(req, res) {
